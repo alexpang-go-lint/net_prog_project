@@ -2,18 +2,21 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Scanner;
 
 /*
- * Student:    Trung Nguyen, Yat Shing Pang
- * Email:      tnguyen2013@my.fit.edu, apang2013@my.fit.edu
- * Course:     CSE 4232
- * Project:    GOSSIP P2P, Milestone 4
+ Sample input:
+
 */
 public class P_Input {
 	final static int max = 1000;
@@ -21,7 +24,8 @@ public class P_Input {
 	static int available_gossips = 1000;
 	static int num_peers = 0;
 	static int num_gossips = 0;
-
+	static String time_pattern = "yyyy-MM-dd-hh-mm-ss-SSS'Z'";
+	static SimpleDateFormat df = new SimpleDateFormat(time_pattern);
 	static boolean discarded = false;
 
 	static Peer[] peer = new Peer[max];
@@ -173,6 +177,8 @@ public class P_Input {
 
 	static String createNewPeer(final Peer[] peer, String name, int port, String ip_addr,
 			final boolean writeToFile, final String fd, File directory) {
+	    int oldPort = 0;
+	    String oldIP_addr = "";
 		// Search for existing peer
 		String toPrint = "Peer exists, address updated\n";
 		boolean peer_exists = false;
@@ -180,43 +186,51 @@ public class P_Input {
 			if (peer[i].name.equals(name)) {
 				// Peer exists
 				// Update ip and port
+			    oldPort = peer[i].port;
+			    oldIP_addr = peer[i].ip_addr;
 				peer[i].port = port;
 				peer[i].ip_addr = ip_addr;
 				peer_exists = true;
 			}
 		}
-
+		
 		if (!peer_exists) {
 			peer[num_peers] = new Peer(name, ip_addr, port);
 			toPrint = "New peer added\n";
 			if (writeToFile) {
-		         try {
-		             // No preexisting file
-		             directory = new File(fd + "peer1.txt");
-		             if (!directory.exists()) {
-		                 directory.createNewFile();
-		             }
-	                 final FileWriter fw = new FileWriter(directory, true);
-	                 final BufferedWriter bw = new BufferedWriter(fw);
-	                 String p = Integer.toString(port);
-
-                     bw.write(name);
-                     bw.newLine();
-                     bw.write(p);
-                     bw.newLine();
-                     bw.write(ip_addr);
-                     bw.newLine();
-
-
-	                 bw.close();
+			    try {
+			        // No preexisting file
+		            directory = new File(fd + "peer1.txt");
+		            if (!directory.exists()) {
+		                directory.createNewFile();
+		            }
+	                final FileWriter fw = new FileWriter(directory, true);
+	                final BufferedWriter bw = new BufferedWriter(fw);
+	                
+                    bw.write(name);
+                    bw.newLine();
+                    bw.write(port);
+                    bw.newLine();
+                    bw.write(ip_addr);
+                    bw.newLine();
+                    
+                    Date currentDate = null;
+                    try {
+                        currentDate = df.parse(new Date().toString());
+                    } catch (ParseException e) {
+                        
+                    }
+                    bw.write(currentDate.toString());
+                    
+	                bw.close();
 	            } catch (final IOException e) {
-
+	                
 	            }
 			}
 			num_peers++;
 			available_peers--;
 		} else {
-
+		    /*
 		    try {
 		        // Completely rewrite the file
 		        // Is easier than changing the contents in the file
@@ -227,8 +241,8 @@ public class P_Input {
                 final FileWriter fw = new FileWriter(directory);
                 final BufferedWriter bw = new BufferedWriter(fw);
                 String p = Integer.toString(port);
-
-                // Rewrite all contensts
+                
+                // Rewrite all contents
                 for (int i = 0; i < num_peers; i++) {
                     ip_addr = peer[i].ip_addr;
                     p = ""+ peer[i].port;
@@ -239,13 +253,71 @@ public class P_Input {
                     bw.newLine();
                     bw.write(ip_addr);
                     bw.newLine();
-
+                    
                 }
 
                 bw.close();
-           } catch (final IOException e) {
+            } catch (final IOException e) {}
+            */
+		    String oldPeerFile = fd+"peer1.txt";
+	        String newPeerFile = fd+"tmp.txt";
 
-           }
+	        BufferedReader br = null;
+	        BufferedWriter bw = null;
+	        try {
+	           br = new BufferedReader(new FileReader(oldPeerFile));
+	           bw = new BufferedWriter(new FileWriter(newPeerFile));
+	           String line;
+	           while ((line = br.readLine()) != null) {
+	              if (line.equals(name)) {
+	                  // Found the one we are replacing
+	                  // Replace the port and address, but don't change the date
+	                  // First write the name
+	                  bw.write(line);
+	                  bw.newLine();
+	                  
+	                  // Then replace the port
+	                  line = br.readLine();
+	                  line = line.replace(Integer.toString(oldPort), Integer.toString(port));
+	                  bw.write(line);
+	                  bw.newLine();
+
+	                  // Then replace the ip address
+	                  line = br.readLine();
+	                  line = line.replace(oldIP_addr, ip_addr);
+	                  bw.write(line);
+	                  bw.newLine();
+	                  
+	                  // Leave the date alone
+	              } else {
+	                  // Not the one we are replacing, just write
+	                  bw.write(line);
+	                  bw.newLine();
+	              }
+	           }
+	        } catch (Exception e) {
+	           
+	        } finally {
+	           try {
+	              if(br != null)
+	                 br.close();
+	           } catch (IOException e) {
+	              //
+	           }
+	           try {
+	              if(bw != null)
+	                 bw.close();
+	           } catch (IOException e) {
+	              //
+	           }
+	        }
+	        // Once everything is complete, delete old file..
+	        File oldFile = new File(oldPeerFile);
+	        oldFile.delete();
+
+	        // And rename tmp file's name to old file name
+	        File newFile = new File(newPeerFile);
+	        newFile.renameTo(oldFile);
 		}
 		return toPrint;
 	}
@@ -270,8 +342,29 @@ public class P_Input {
 						final String name = sc.next();
 						final int port = Integer.parseInt(sc.next());
 						final String ip_addr = sc.next();
-
-						createNewPeer(peer, name, port, ip_addr, false, fd, directory);
+						
+						// Check if date is 2 days old
+						final String d = sc.next();
+						Date peerDate = null;
+						try {
+				            
+				            peerDate = df.parse(d);
+				        } catch (final ParseException e) {
+				            System.out.println("Error on parsing date " + e);
+				        }
+						
+						Instant currentD = new Date().toInstant();
+						Instant peerD = peerDate.toInstant();
+						
+						// 60 seconds * 60 minutes * 24 hours * 2 = 2 days in unit of seconds
+						currentD.minusSeconds(60 * 60 * 24 * 2);
+						
+						if (currentD.compareTo(peerD) > 0) {
+						    // Add this peer to memory, because it is less than 2 days old
+						    createNewPeer(peer, name, port, ip_addr, false, fd, directory);
+						} else {
+						    // Forget this peer
+						}
 					}
 				} else if (existing_items[i].contains("gossip")) {
 					while (sc.hasNext()) {
@@ -312,23 +405,23 @@ public class P_Input {
 	public boolean isDiscarded() {
 		return discarded;
 	}
-
+	
 	public ArrayList<Peer> getAllPeers() {
 	    ArrayList<Peer> allPeers = new ArrayList<Peer>();
 	    for (int i = 0; i < num_peers; i++) {
 	        allPeers.add(peer[i]);
-
+	        
 	    }
-
+	    
 	    return allPeers;
 	}
-
+	
 	public ArrayList<Gossip> getAllGossips() {
         ArrayList<Gossip> allGossips = new ArrayList<Gossip>();
         for (int i = 0; i < num_gossips; i++) {
             allGossips.add(gossip[i]);
         }
-
+        
         return allGossips;
     }
 }
