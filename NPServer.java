@@ -24,13 +24,14 @@ public class NPServer {
 
             p.waitFor();
             path = out.readLine();
-            path = path.substring(0, path.length()-3) + ("data/");
+            path = path.substring(0, path.length()-6) + ("data/");
             //System.out.println(path);
         } catch (IOException | InterruptedException e) {
             // TODO Auto-generated catch block
             System.out.println("Invalid path: " + e);
             System.exit(0);
         }
+
         return path;
 
     }
@@ -39,27 +40,23 @@ public class NPServer {
 		int port = 3333;
 		String path = "";
 		final String addr = "127.0.0.1";
-		
+		String connectionType = "TCP";
 		final CommandLineParser parser = new DefaultParser();
 		final GET_OPT_SERVER opt = new GET_OPT_SERVER(port, path);
 		opt.getOpt(parser, args);
 		port = opt.getPort();
 		path = opt.getPath();
-		// No path for data directory specified, use default
-		if (path.equals("")) {
-		    path = getPath();
-		    System.out.println("No data file path specified, using default path.");
-	    }
         System.out.println("Server started at port: " + port
                             +"\nData file path: " + path);
-		// create thread 1 listen for TCP 1 listen to UDP
-		final Thread tcp = new TCPThread(port, path);
-		final Thread udp = new UDPServer(port, path);
-		// start the thread
-		tcp.start();
-		udp.start();
-
-		tcp.join();
-		udp.join();
+        // create thread 1 listen for TCP 1 listen to UDP
+        final Thread tcp = new TCPThread(port, path);
+        final Thread udp = new UDPServer(port, path);
+        final Thread client = new thread_client(connectionType, addr, port);
+        // start the thread
+        tcp.start();
+        udp.start();
+        client.start();
+        tcp.join();
+        udp.join();
 	}
 }

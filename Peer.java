@@ -7,10 +7,10 @@ import java.math.BigInteger;
  * Project:    GOSSIP P2P, Milestone 4
 */
 
-public class Peer extends ASNObj {
+public class Peer extends ASNObjArrayable {
 	String name, ip_addr;
 	int port;
-	final static byte TAG_AP2 = (byte) Encoder.buildASN1byteType(Encoder.CLASS_APPLICATION, 0, (byte)2);
+	final static byte TAG_AP2 = (byte) Encoder.buildASN1byteType(Encoder.CLASS_APPLICATION, Encoder.PC_CONSTRUCTED, (byte)2);
 
 	// Empty constructor for peers answer
 	public Peer() {
@@ -30,21 +30,23 @@ public class Peer extends ASNObj {
     public Encoder getEncoder() {
         Encoder e = new Encoder().initSequence();
         e.addToSequence(new Encoder(name).setASN1Type(Encoder.TAG_UTF8String));             // Encode string
-        e.addToSequence(new Encoder(port));                                                 // Encode integer
+        e.addToSequence(new Encoder(port).setASN1Type(Encoder.TAG_INTEGER));                                                 // Encode integers
         e.addToSequence(new Encoder(ip_addr).setASN1Type(Encoder.TAG_PrintableString));     // Encode printable string
 
-        return e.setASN1Type(Encoder.TAG_SEQUENCE);
+        return e.setASN1Type(TAG_AP2);
     }
 
     @Override
     public Peer decode(Decoder dec) throws ASN1DecoderFail {
         Decoder d = dec.getContent();
 
-        String decoded_NAME = d.getFirstObject(true).getString(Encoder.TAG_UTF8String);
-        BigInteger decoded_PORT = d.getFirstObject(true).getInteger();
-        String decoded_IP = d.getFirstObject(true).getString(Encoder.TAG_PrintableString);
+        name = d.getFirstObject(true).getString(Encoder.TAG_UTF8String);
+        port = d.getFirstObject(true).getInteger(Encoder.TAG_INTEGER).intValue();
+        ip_addr = d.getFirstObject(true).getString(Encoder.TAG_PrintableString);
 
-        return new Peer(decoded_NAME, decoded_IP, decoded_PORT.intValue());
+        return this; //new Peer(decoded_NAME, decoded_IP, decoded_PORT.intValue());
     }
-
+    public Peer instance() throws CloneNotSupportedException {
+        return new Peer();
+    }
 }

@@ -103,15 +103,16 @@ public class thread_client extends Thread {
                     if (isQuery) {
                         // Decode Peers? response
                         Decoder d = new Decoder(serverRes);
-                        ArrayList<Peer> decoded_pa = new ArrayList<Peer>();
+                        ArrayList<Peer> list = new ArrayList<Peer>();
+                        PeersAnswer decoded_pa = new PeersAnswer(list);
                         try {
                             decoded_pa = new PeersAnswer().decode(d);
 
-                            String toPrint = "PEERS|" + decoded_pa.size() + "|";
-                            for (int i = 0; i < decoded_pa.size(); i++) {
-                                toPrint += decoded_pa.get(i).name +
-                                        ":" + "PORT=" + decoded_pa.get(i).port +
-                                        ":" + "IP=" + decoded_pa.get(i).ip_addr + "|";
+                            String toPrint = "PEERS|" + decoded_pa.peers.size() + "|";
+                            for (int i = 0; i < decoded_pa.peers.size(); i++) {
+                                toPrint += decoded_pa.peers.get(i).name +
+                                        ":" + "PORT=" + decoded_pa.peers.get(i).port +
+                                        ":" + "IP=" + decoded_pa.peers.get(i).ip_addr + "|";
                             }
 
                             toPrint += "%";
@@ -185,15 +186,16 @@ public class thread_client extends Thread {
                     byte[] b = recv.getData();
 
                     Decoder d = new Decoder(b);
-                    ArrayList<Peer> decoded_pa = new ArrayList<Peer>();
+                    ArrayList<Peer> list = new ArrayList<Peer>();
+                    PeersAnswer decoded_pa = new PeersAnswer(list);
                     try {
                         decoded_pa = new PeersAnswer().decode(d);
 
-                        String toPrint = "PEERS|" + decoded_pa.size() + "|";
-                        for (int i = 0; i < decoded_pa.size(); i++) {
-                            toPrint += decoded_pa.get(i).name +
-                                    ":" + "PORT=" + decoded_pa.get(i).port +
-                                    ":" + "IP=" + decoded_pa.get(i).ip_addr + "|";
+                        String toPrint = "PEERS|" + decoded_pa.peers.size() + "|";
+                        for (int i = 0; i < decoded_pa.peers.size(); i++) {
+                            toPrint += decoded_pa.peers.get(i).name +
+                                    ":" + "PORT=" + decoded_pa.peers.get(i).port +
+                                    ":" + "IP=" + decoded_pa.peers.get(i).ip_addr + "|";
                         }
 
                         toPrint += "%";

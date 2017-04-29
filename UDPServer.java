@@ -24,6 +24,13 @@ public class UDPServer extends Thread {
 
 	@Override
 	public void run() {
+		// System.out.println("start thread");
+		try {
+			this.sleep(5000);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		final byte[] data = new byte[1024];
 
 		while (true) {
@@ -45,7 +52,7 @@ public class UDPServer extends Thread {
 			try {
 				input = new String(msg.getData(), "latin1");
 				// System.out.println("server connected");
-				System.out.println(input);
+				// System.out.println(input);
 			} catch (final UnsupportedEncodingException e) {
 				e.printStackTrace();
 				continue;
@@ -64,7 +71,7 @@ public class UDPServer extends Thread {
 		            decoded_G = new Gossip().decode(d);
 		            toProcess = "GOSSIP:" + decoded_G.SHA_256 + ":" + decoded_G.str_date + ":" + decoded_G.msg;
 		            isGossip = true;
-		        } catch (ASN1DecoderFail | ASNLenRuntimeException e4) {
+		        } catch (ASN1DecoderFail e3) {
 		            /* Really BAD practice */
 		            // Not gossip, do nothing
 		        }
@@ -74,13 +81,12 @@ public class UDPServer extends Thread {
 		            decoded_P = new Peer().decode(d);
 		            toProcess = "PEER:" + decoded_P.name + ":PORT=" + decoded_P.port + ":IP=" + decoded_P.ip_addr;
 		            isPeer = true;
-		        } catch (ASN1DecoderFail | ASNLenRuntimeException e4) {
+		        } catch (ASN1DecoderFail e3) {
 		            // Not peer, do nothing
 		        }
 	        }
 
 			try {
-			System.out.println(toProcess);
 				final P_Input p = new P_Input();
 				final String output = p.processInput(toProcess, path);
 				DatagramPacket outPack = null;

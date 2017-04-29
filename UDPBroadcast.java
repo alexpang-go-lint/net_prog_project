@@ -29,7 +29,10 @@ public class UDPBroadcast {
 		DatagramSocket udpSocket;
 		try {
             System.out.println("Server is broadcasting");
-			final byte[] outMsg = msg.getBytes("latin1");
+            String[] str = msg.split(":");
+            Gossip g = new Gossip(str[3], str[1], str[2]);
+            Encoder e = g.getEncoder();
+			final byte[] outMsg = e.getBytes();
 			udpSocket = new DatagramSocket(port);
 			udpSocket.setBroadcast(true);
 			for (int i = 0; i < ports.length; i++) {

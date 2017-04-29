@@ -15,14 +15,14 @@ public class PeersQuery extends ASNObj {
     @Override
     public Encoder getEncoder() {
         Encoder e = new Encoder();
-        e.addToSequence(new Encoder().getNullEncoder().setNull());
-        return e.setNull();
+        //e.addToSequence(new Encoder().getNullEncoder().setNull());
+        return e.setASN1Type(TAG_AP3);
     }
 
     @Override
     public PeersQuery decode(Decoder dec) throws ASN1DecoderFail {
 
-        return null;
+        return this;
     }
 
 }

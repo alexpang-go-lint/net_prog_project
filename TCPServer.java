@@ -25,9 +25,16 @@ public class TCPServer extends Thread {
 		this.path = path;
 	}
 
+	@SuppressWarnings("static-access")
 	@Override
 	public void run() {
 		// System.out.println("start thread");
+		try {
+			this.sleep(5000);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		try {
 
 			final InputStreamReader inStream = new InputStreamReader(sock.getInputStream());
@@ -92,7 +99,7 @@ public class TCPServer extends Thread {
 						// Broadcast regardless if it is discarded or not.
 						if (ips != null) {
 
-    						UDPBroadcast bc = new UDPBroadcast(sock.getPort(), output, ips, ports);
+    						UDPBroadcast bc = new UDPBroadcast(sock.getPort(), toProcess, ips, ports);
     						bc.broadCast();
     						System.out.println("S: Returned to TCP");
 						}

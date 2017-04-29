@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 public class PeersAnswer extends ASNObj {
     ArrayList<Peer> peers = new ArrayList<Peer>();
+	final static byte TAG_AC1 = (byte) Encoder.buildASN1byteType(Encoder.CLASS_CONTEXT, Encoder.PC_CONSTRUCTED, (byte)1);
 
     public PeersAnswer() {
 
@@ -20,22 +21,19 @@ public class PeersAnswer extends ASNObj {
 
     }
 
-    @Override
+    @SuppressWarnings("static-access")
+	@Override
     public Encoder getEncoder() {
-        Encoder e = new Encoder();
-        for (int i = 0; i < peers.size(); i++) {
-            e.addToSequence(new Encoder(peers.get(i).name).setASN1Type(Encoder.TAG_UTF8String));             // Encode string
-            e.addToSequence(new Encoder(peers.get(i).port));                                                 // Encode integer
-            e.addToSequence(new Encoder(peers.get(i).ip_addr).setASN1Type(Encoder.TAG_PrintableString));     // Encode printable string
-        }
-
-        return e.setASN1Type(Encoder.TAG_SEQUENCE);
+        Encoder e = new Encoder().initSequence();
+        e.getEncoder(peers);
+        return new Encoder().initSequence().addToSequence(e).setASN1Type(TAG_AC1);
     }
 
     @Override
-    public ArrayList<Peer> decode(Decoder dec) throws ASN1DecoderFail {
+    public PeersAnswer decode(Decoder dec) throws ASN1DecoderFail {
         Decoder d = dec.getContent();
-
+        peers = d.getFirstObject(true).getSequenceOfAL(Peer.TAG_AP2, new Peer());
+/*
         // While there are still things to decode
         while (d.tagVal() != 0) {   // Returns zero when there are no more bytes
 
@@ -44,8 +42,8 @@ public class PeersAnswer extends ASNObj {
             String decoded_IP = d.getFirstObject(true).getString(Encoder.TAG_PrintableString);
 
             peers.add(new Peer(decoded_NAME, decoded_IP, decoded_PORT.intValue()));
-        }
+        }*/
 
-        return peers;
+        return this;
     }
 }

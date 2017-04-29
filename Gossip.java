@@ -43,7 +43,7 @@ public class Gossip extends ASNObj {
         e.addToSequence(new Encoder(c));                                                        // Encode calendar
         e.addToSequence(new Encoder(msg).setASN1Type(Encoder.TAG_UTF8String));                  // Encode string
 
-        return e.setASN1Type(Encoder.TAG_SEQUENCE);
+        return e.setASN1Type(TAG_AP1);
     }
 
     @Override
