@@ -65,35 +65,41 @@ public class TCPServer extends Thread {
 
 				// Decode
 		        Decoder d = new Decoder(input.getBytes());
-		        if (d.getBytes() == null) {
-		            // If its null, its "PEERS\n"
-		            toProcess = "PEERS?\n";
-		            isQuery = true;
-		        } else {
-    		        Gossip decoded_G;
-    		        try {
-    		            decoded_G = new Gossip().decode(d);
-    		            toProcess = "GOSSIP:" + decoded_G.SHA_256 + ":" + decoded_G.str_date + ":" + decoded_G.msg;
-    		            isGossip = true;
-    		        } catch (ASN1DecoderFail e3) {
-    		            /* Really BAD practice */
-    		            // Not gossip, do nothing
-    		        }
-
-    		        Peer decoded_P;
-    		        try {
-    		            decoded_P = new Peer().decode(d);
-    		            toProcess = "PEER:" + decoded_P.name + ":PORT=" + decoded_P.port + ":IP=" + decoded_P.ip_addr;
-    		            isPeer = true;
-
-    		        } catch (ASN1DecoderFail e3) {
-    		            // Not peer, do nothing
-    		        }
+		        if(d.tagVal() == 3){
+		        	toProcess = "PEERS?";
+		        }else{
+	        	
+			        Gossip decoded_G;
+			        try {
+			            decoded_G = new Gossip().decode(d);
+			            toProcess = "GOSSIP:" + decoded_G.SHA_256 + ":" + decoded_G.str_date + ":" + decoded_G.msg;
+			            isGossip = true;
+			        } catch (ASN1DecoderFail e3) {
+			            /* Really BAD practice */
+			            // Not gossip, do nothing
+			        }
+	
+			        Peer decoded_P;
+			        try {
+			            decoded_P = new Peer().decode(d);
+			            toProcess = "PEER:" + decoded_P.name + ":PORT=" + decoded_P.port + ":IP=" + decoded_P.ip_addr;
+			            isPeer = true;
+	
+			        } catch (ASN1DecoderFail e3) {
+			            // Not peer, do nothing
+			        }
+			        Leave decoded_leave;
+			        try {
+			            decoded_leave = new Leave().decode(d);
+			            toProcess = "LEAVE:" + decoded_leave.name;
+			        } catch (ASN1DecoderFail e3) {
+			            // Not peer, do nothing
+			        }
 		        }
 				String output = p.processInput(toProcess, path);
 
 				// GOSSIP
-				if (toProcess.contains("GOSSIP")) {
+				if (toProcess.contains("GOSSIP:")) {
 						String[] ips = p.getIPs();
 						int[] ports = p.getPorts();
 						// Broadcast regardless if it is discarded or not.
@@ -103,6 +109,8 @@ public class TCPServer extends Thread {
     						bc.broadCast();
     						System.out.println("S: Returned to TCP");
 						}
+				}else if(toProcess.contains("LEAVE:")){
+					//call leave
 				}
 				// Encode again back to client
 				if (isGossip) {

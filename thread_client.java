@@ -95,6 +95,14 @@ public class thread_client extends Thread {
                         userIn = new String(e.getBytes());
                         isQuery = true;
                     }
+                    else if(userIn.contains("LEAVE")){
+                        // Encodes in null
+                    	String name = null;
+                        Leave leave_user = new Leave(name);
+
+                        Encoder e = leave_user.getEncoder();
+                        userIn = new String(e.getBytes());
+                    }
 
 
                     out.write((userIn + "\n").getBytes("latin1"));

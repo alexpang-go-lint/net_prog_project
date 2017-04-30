@@ -3,7 +3,10 @@ public class Leave extends ASNObj {
 	
 	final static byte TAG_AP4 = (byte) Encoder.buildASN1byteType(Encoder.CLASS_APPLICATION, Encoder.PC_PRIMITIVE, (byte)4);
 	String name = null;
-
+	
+	public Leave(){
+	}
+	
 	public Leave(String name){
 		this.name = name;
 	}
@@ -15,7 +18,7 @@ public class Leave extends ASNObj {
 	}
 
 	@Override
-	public Object decode(Decoder dec) throws ASN1DecoderFail {
+	public Leave decode(Decoder dec) throws ASN1DecoderFail {
 		Decoder d = dec.getContent();
 		name = d.getFirstObject(true).getString(TAG_AP4);
 		return this;
