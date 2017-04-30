@@ -49,6 +49,7 @@ public class UI {
         int port = 0;
         String path = "";
         String protocol = "";
+        int delayTime = 0;
 
         // Handles the bug where the message is enclosed in double quotes in bash script
         // The double quotes will get truncated when it is passed to the java program
@@ -98,6 +99,7 @@ public class UI {
 		port = opt.getPort();
 		path = opt.getPath();
 		protocol = opt.getProtocol();
+		delayTime = opt.getDelayTime();
 
 		if(protocol.equals("")){
 			protocol = "TCP";
