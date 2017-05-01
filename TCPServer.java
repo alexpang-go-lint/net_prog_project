@@ -67,8 +67,7 @@ public class TCPServer extends Thread {
 		        Decoder d = new Decoder(input.getBytes());
 		        if(d.tagVal() == 3){
 		        	toProcess = "PEERS?";
-		        }else{
-	        	
+		        }else if(d.tagVal() == 1){
 			        Gossip decoded_G;
 			        try {
 			            decoded_G = new Gossip().decode(d);
@@ -78,7 +77,7 @@ public class TCPServer extends Thread {
 			            /* Really BAD practice */
 			            // Not gossip, do nothing
 			        }
-	
+		        }else if(d.tagVal() == 2){
 			        Peer decoded_P;
 			        try {
 			            decoded_P = new Peer().decode(d);
@@ -88,6 +87,7 @@ public class TCPServer extends Thread {
 			        } catch (ASN1DecoderFail e3) {
 			            // Not peer, do nothing
 			        }
+		        }else if(d.tagVal() == 4){
 			        Leave decoded_leave;
 			        try {
 			            decoded_leave = new Leave().decode(d);
@@ -111,6 +111,7 @@ public class TCPServer extends Thread {
 						}
 				}else if(toProcess.contains("LEAVE:")){
 					//call leave
+					
 				}
 				// Encode again back to client
 				if (isGossip) {

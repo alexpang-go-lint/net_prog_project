@@ -97,7 +97,8 @@ public class thread_client extends Thread {
                     }
                     else if(userIn.contains("LEAVE")){
                         // Encodes in null
-                    	String name = null;
+                    	String[] str = userIn.split(":");
+                    	String name = str[1];
                         Leave leave_user = new Leave(name);
 
                         Encoder e = leave_user.getEncoder();

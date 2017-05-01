@@ -60,12 +60,9 @@ public class UDPServer extends Thread {
 
 			String toProcess = "";
 			Decoder d = new Decoder(input.getBytes());
-	        if (d.getBytes() == null) {
-	            // If its null, its "PEERS\n"
-	            toProcess = "PEERS?\n";
-	            isQuery = true;
-
-	        } else {
+			if(d.tagVal() == 3){
+	        	toProcess = "PEERS?";
+	        }else if(d.tagVal() == 1){
 		        Gossip decoded_G;
 		        try {
 		            decoded_G = new Gossip().decode(d);
@@ -75,12 +72,21 @@ public class UDPServer extends Thread {
 		            /* Really BAD practice */
 		            // Not gossip, do nothing
 		        }
-
+	        }else if(d.tagVal() == 2){
 		        Peer decoded_P;
 		        try {
 		            decoded_P = new Peer().decode(d);
 		            toProcess = "PEER:" + decoded_P.name + ":PORT=" + decoded_P.port + ":IP=" + decoded_P.ip_addr;
 		            isPeer = true;
+
+		        } catch (ASN1DecoderFail e3) {
+		            // Not peer, do nothing
+		        }
+	        }else if(d.tagVal() == 4){
+		        Leave decoded_leave;
+		        try {
+		            decoded_leave = new Leave().decode(d);
+		            toProcess = "LEAVE:" + decoded_leave.name;
 		        } catch (ASN1DecoderFail e3) {
 		            // Not peer, do nothing
 		        }
