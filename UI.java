@@ -107,7 +107,7 @@ public class UI {
 
 		// No path for data directory specified, use default
 		if (path.equals("")) {
-			path = "E:/Downloads/milestone5-master";
+			path = "E:/Downloads/milestone5-master/";
 			//path = getPath();
 		    System.out.println("No data file path specified, using default path.");
 	    }

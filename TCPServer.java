@@ -89,13 +89,18 @@ public class TCPServer extends Thread {
 			        }
 		        }else if(d.tagVal() == 4){
 			        Leave decoded_leave;
+			        
 			        try {
+			        	//System.out.println("decoding leave");
 			            decoded_leave = new Leave().decode(d);
 			            toProcess = "LEAVE:" + decoded_leave.name;
+			            //System.out.println("decoded leave");
 			        } catch (ASN1DecoderFail e3) {
-			            // Not peer, do nothing
+			        	System.out.println("leave decode failed");
 			        }
 		        }
+		        //System.out.println("tag is " + d.tagVal());
+		        //System.out.println("the input is " + toProcess);
 				String output = p.processInput(toProcess, path);
 
 				// GOSSIP
@@ -109,9 +114,6 @@ public class TCPServer extends Thread {
     						bc.broadCast();
     						System.out.println("S: Returned to TCP");
 						}
-				}else if(toProcess.contains("LEAVE:")){
-					//call leave
-					
 				}
 				// Encode again back to client
 				if (isGossip) {

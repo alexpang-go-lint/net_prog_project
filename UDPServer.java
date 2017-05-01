@@ -97,8 +97,6 @@ public class UDPServer extends Thread {
 				final String output = p.processInput(toProcess, path);
 				DatagramPacket outPack = null;
 
-
-
 				if (output.contains("Error")) {
 					final byte[] outMsg = output.getBytes("latin1");
 					outPack = new DatagramPacket(outMsg, outMsg.length, addr, port);
@@ -107,7 +105,7 @@ public class UDPServer extends Thread {
 					outPack = new DatagramPacket(outMsg, outMsg.length, addr, port);
 					// System.out.println("sending data");
 					// System.out.println(data);
-					if (toProcess.contains("GOSSIP")) {
+					if (toProcess.contains("GOSSIP:")) {
     					// Broadcast
 					    final int[] ports = p.getPorts();
     					final String[] ips = p.getIPs();
@@ -116,7 +114,12 @@ public class UDPServer extends Thread {
     	                    final UDPBroadcast bc = new UDPBroadcast(port, output, ips, ports);
     	                    bc.broadCast();
     					}
+					}else if (toProcess.contains("LEAVE:")) {
+						//call leave
+						String[] str = toProcess.split(":");
+						String name = str[1];
 					}
+					
 				}
 				if (isGossip) {
 

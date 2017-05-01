@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -49,7 +50,7 @@ public class P_Input {
 
 	}
 
-	public String processInput(final String in, String fd) {
+	public String processInput(final String in, String fd) throws IOException {
 		Scanner sc = null;
 		String toPrint = null;
 
@@ -111,6 +112,12 @@ public class P_Input {
 
 			toPrint = createNewPeer(peer, name, p, ip, true, fd, directory);
 
+		} else if (in.contains("LEAVE:")){
+			sc.next();
+			// Name
+			final String name = sc.next();
+			
+			toPrint = leaveUser(name, fd);
 		} else {
 			toPrint = ("Error: Unrecognizeable command");
 		}
@@ -283,9 +290,50 @@ public class P_Input {
 						createNewGossip(gossip, SHA_256, date, msg, false, fd, directory);
 					}
 				}
+				sc.close();
 			}
 		}
 
+	}
+	
+	public String leaveUser(String name, final String fd) throws IOException{
+		String result = null;
+		for(int i = 0; i < num_peers; i++ ){
+			if(peer[i] != null && peer[i].name.equals(name)){
+				File directory = new File(fd + "peer1.txt");
+				File tempFile = new File(fd + "tempPeer.txt");
+	             if (!directory.exists()) {
+	                 break;
+	             }
+	             if (!tempFile.exists()) {
+	            	 tempFile.createNewFile();
+	             }
+	             BufferedReader reader = new BufferedReader(new FileReader(directory));
+	             BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
+	             String currentLine;
+	             
+	             while((currentLine = reader.readLine()) != null) {
+					// trim newline when comparing with lineToRemove
+					String trimmedLine = currentLine.trim();
+					if(trimmedLine.equals(name)) {
+						reader.readLine();
+						reader.readLine();
+						continue;
+					}
+					writer.write(currentLine + System.getProperty("line.separator"));
+				}
+				writer.close(); 
+				reader.close();
+				if (!directory.delete()) {
+					System.out.println("Can't delete file");
+				}
+				if (!tempFile.renameTo(directory)) {
+				    System.out.println("Can't rename file");
+				}
+			}
+		}
+		result = "Left "+ name;
+		return result;
 	}
 
 	public int[] getPorts() {

@@ -64,7 +64,7 @@ public class thread_client extends Thread {
                 for(;;){
                     boolean isQuery = false;
                     userIn = stdin.readLine();
-                    if (!userIn.contains("PEER") && !userIn.contains("PEERS?") && !userIn.contains("GOSSIP:")) {
+                    if (!userIn.contains("PEER") && !userIn.contains("PEERS?") && !userIn.contains("GOSSIP:")&& !userIn.contains("LEAVE:")) {
                         // User input only has message
                         // Construct GOSSIP:...:...:...
                         userIn = getGOSSIP(userIn, "");
@@ -94,8 +94,7 @@ public class thread_client extends Thread {
                         Encoder e = pq.getEncoder();
                         userIn = new String(e.getBytes());
                         isQuery = true;
-                    }
-                    else if(userIn.contains("LEAVE")){
+                    }else if(userIn.contains("LEAVE")){
                         // Encodes in null
                     	String[] str = userIn.split(":");
                     	String name = str[1];
@@ -104,7 +103,6 @@ public class thread_client extends Thread {
                         Encoder e = leave_user.getEncoder();
                         userIn = new String(e.getBytes());
                     }
-
 
                     out.write((userIn + "\n").getBytes("latin1"));
                     numByte = in.read(serverRes);
@@ -179,6 +177,14 @@ public class thread_client extends Thread {
                     Encoder e = pq.getEncoder();
                     userIn = new String(e.getBytes());
                     isQuery = true;
+                }else if(userIn.contains("LEAVE:")){
+                    // Encodes in null
+                	String[] str = userIn.split(":");
+                	String name = str[1];
+                    Leave leave_user = new Leave(name);
+
+                    Encoder e = leave_user.getEncoder();
+                    userIn = new String(e.getBytes());
                 }
 
                 byte[] msg = userIn.getBytes("latin1");

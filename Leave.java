@@ -20,7 +20,7 @@ public class Leave extends ASNObj {
 	@Override
 	public Leave decode(Decoder dec) throws ASN1DecoderFail {
 		Decoder d = dec.getContent();
-		name = d.getFirstObject(true).getString(TAG_AP4);
+		name = d.getFirstObject(true).getString(Encoder.TAG_UTF8String);
 		return this;
 	}
 
