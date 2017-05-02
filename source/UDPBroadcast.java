@@ -1,3 +1,4 @@
+
 /*
  * Student:    Trung Nguyen, Yat Shing Pang
  * Email:      tnguyen2013@my.fit.edu, apang2013@my.fit.edu
@@ -17,7 +18,7 @@ public class UDPBroadcast {
 	private final String[] ips;
 	private final int[] ports;
 
-	public UDPBroadcast(final int port, String msg, final String[] ips, final int[] ports) {
+	public UDPBroadcast(final int port, final String msg, final String[] ips, final int[] ports) {
 		this.port = port;
 		this.msg = msg;
 		this.ips = ips;
@@ -28,10 +29,10 @@ public class UDPBroadcast {
 
 		DatagramSocket udpSocket;
 		try {
-            System.out.println("Server is broadcasting");
-            String[] str = msg.split(":");
-            Gossip g = new Gossip(str[3], str[1], str[2]);
-            Encoder e = g.getEncoder();
+			System.out.println("Server is broadcasting");
+			final String[] str = msg.split(":");
+			final Gossip g = new Gossip(str[3], str[1], str[2]);
+			final Encoder e = g.getEncoder();
 			final byte[] outMsg = e.getBytes();
 			udpSocket = new DatagramSocket(port);
 			udpSocket.setBroadcast(true);
@@ -39,8 +40,7 @@ public class UDPBroadcast {
 				final InetAddress temp = InetAddress.getByName(ips[i]);
 				final DatagramPacket outPack = new DatagramPacket(outMsg, outMsg.length, temp, ports[i]);
 				udpSocket.send(outPack);
-                System.out.println("Message sent to address: " + ips[i]
-                                    + " port: " + ports[i]);
+				System.out.println("Message sent to address: " + ips[i] + " port: " + ports[i]);
 			}
 			udpSocket.close();
 		} catch (final IOException e) {

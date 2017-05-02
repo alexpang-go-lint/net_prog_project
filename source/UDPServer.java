@@ -15,22 +15,20 @@ public class UDPServer extends Thread {
 
 	private final DatagramSocket udpSocket;
 	private final String path;
-	private final int delay;
+	private final int delay = 0;
 
 	public UDPServer(final int port, final String path, final int delay) throws SocketException {
 
 		udpSocket = new DatagramSocket(port);
 		this.path = path;
-		this.delay = delay;
 	}
 
-	@SuppressWarnings("static-access")
 	@Override
 	public void run() {
 		// System.out.println("start thread");
 		try {
-			this.sleep(delay);
-		} catch (InterruptedException e1) {
+			Thread.sleep(delay);
+		} catch (final InterruptedException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
@@ -38,7 +36,8 @@ public class UDPServer extends Thread {
 
 		while (true) {
 			final DatagramPacket msg = new DatagramPacket(data, data.length);
-			boolean isGossip = false, isPeer = false, isQuery = false;
+			boolean isGossip = false, isPeer = false;
+			final boolean isQuery = false;
 			try {
 				udpSocket.receive(msg);
 			} catch (final IOException e) {
@@ -49,7 +48,6 @@ public class UDPServer extends Thread {
 			final int port = msg.getPort();
 			final InetAddress addr = msg.getAddress();
 
-			@SuppressWarnings("unused")
 			String input;
 
 			try {
@@ -62,38 +60,38 @@ public class UDPServer extends Thread {
 			}
 
 			String toProcess = "";
-			Decoder d = new Decoder(input.getBytes());
-			if(d.tagVal() == 3){
-	        	toProcess = "PEERS?";
-	        }else if(d.tagVal() == 1){
-		        Gossip decoded_G;
-		        try {
-		            decoded_G = new Gossip().decode(d);
-		            toProcess = "GOSSIP:" + decoded_G.SHA_256 + ":" + decoded_G.str_date + ":" + decoded_G.msg;
-		            isGossip = true;
-		        } catch (ASN1DecoderFail e3) {
-		            /* Really BAD practice */
-		            // Not gossip, do nothing
-		        }
-	        }else if(d.tagVal() == 2){
-		        Peer decoded_P;
-		        try {
-		            decoded_P = new Peer().decode(d);
-		            toProcess = "PEER:" + decoded_P.name + ":PORT=" + decoded_P.port + ":IP=" + decoded_P.ip_addr;
-		            isPeer = true;
+			final Decoder d = new Decoder(input.getBytes());
+			if (d.tagVal() == 3) {
+				toProcess = "PEERS?";
+			} else if (d.tagVal() == 1) {
+				Gossip decoded_G;
+				try {
+					decoded_G = new Gossip().decode(d);
+					toProcess = "GOSSIP:" + decoded_G.SHA_256 + ":" + decoded_G.str_date + ":" + decoded_G.msg;
+					isGossip = true;
+				} catch (final ASN1DecoderFail e3) {
+					/* Really BAD practice */
+					// Not gossip, do nothing
+				}
+			} else if (d.tagVal() == 2) {
+				Peer decoded_P;
+				try {
+					decoded_P = new Peer().decode(d);
+					toProcess = "PEER:" + decoded_P.name + ":PORT=" + decoded_P.port + ":IP=" + decoded_P.ip_addr;
+					isPeer = true;
 
-		        } catch (ASN1DecoderFail e3) {
-		            // Not peer, do nothing
-		        }
-	        }else if(d.tagVal() == 4){
-		        Leave decoded_leave;
-		        try {
-		            decoded_leave = new Leave().decode(d);
-		            toProcess = "LEAVE:" + decoded_leave.name;
-		        } catch (ASN1DecoderFail e3) {
-		            // Not peer, do nothing
-		        }
-	        }
+				} catch (final ASN1DecoderFail e3) {
+					// Not peer, do nothing
+				}
+			} else if (d.tagVal() == 4) {
+				Leave decoded_leave;
+				try {
+					decoded_leave = new Leave().decode(d);
+					toProcess = "LEAVE:" + decoded_leave.name;
+				} catch (final ASN1DecoderFail e3) {
+					// Not peer, do nothing
+				}
+			}
 
 			try {
 				final P_Input p = new P_Input();
@@ -109,14 +107,14 @@ public class UDPServer extends Thread {
 					// System.out.println("sending data");
 					// System.out.println(data);
 					if (toProcess.contains("GOSSIP:")) {
-    					// Broadcast
-					    final int[] ports = p.getPorts();
-    					final String[] ips = p.getIPs();
+						// Broadcast
+						final int[] ports = p.getPorts();
+						final String[] ips = p.getIPs();
 
-    					if (ips != null) {
-    	                    final UDPBroadcast bc = new UDPBroadcast(port, output, ips, ports);
-    	                    bc.broadCast();
-    					}
+						if (ips != null) {
+							final UDPBroadcast bc = new UDPBroadcast(port, output, ips, ports);
+							bc.broadCast();
+						}
 					}
 				}
 				if (isGossip) {
@@ -125,13 +123,13 @@ public class UDPServer extends Thread {
 
 				} else if (isQuery) {
 
-			        PeersAnswer pa = new PeersAnswer(p.getAllPeers());
-			        Encoder e = pa.getEncoder();
-				    outPack = new DatagramPacket(e.getBytes(), e.getBytes().length, addr, port);
+					final PeersAnswer pa = new PeersAnswer(p.getAllPeers());
+					final Encoder e = pa.getEncoder();
+					outPack = new DatagramPacket(e.getBytes(), e.getBytes().length, addr, port);
 				}
 				try {
-					this.sleep(2000);
-				} catch (InterruptedException e) {
+					Thread.sleep(2000);
+				} catch (final InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}

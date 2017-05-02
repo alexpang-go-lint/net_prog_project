@@ -1,3 +1,11 @@
+
+/*
+ * Student:    Trung Nguyen, Yat Shing Pang
+ * Email:      tnguyen2013@my.fit.edu, apang2013@my.fit.edu
+ * Course:     CSE 4232
+ * Project:    GOSSIP P2P, Milestone 5
+*/
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -10,12 +18,6 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-/*
- * Student:    Trung Nguyen, Yat Shing Pang
- * Email:      tnguyen2013@my.fit.edu, apang2013@my.fit.edu
- * Course:     CSE 4232
- * Project:    GOSSIP P2P, Milestone 5
-*/
 public class P_Input {
 	final static int max = 1000;
 	static int available_peers = 1000;
@@ -35,12 +37,13 @@ public class P_Input {
 			p = Runtime.getRuntime().exec("pwd");
 			final InputStream stdout = p.getInputStream();
 			final BufferedReader out = new BufferedReader(new InputStreamReader(stdout));
-			//final BufferedReader outerr = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+			// final BufferedReader outerr = new BufferedReader(new
+			// InputStreamReader(p.getErrorStream()));
 
 			p.waitFor();
 			path = out.readLine();
-            path = path.substring(0, path.length()-6) + ("data/");
-            //System.out.println(path);
+			path = path.substring(0, path.length() - 6) + ("data/");
+			// System.out.println(path);
 		} catch (IOException | InterruptedException e) {
 			System.out.println("Invalid path: " + e);
 			System.exit(0);
@@ -81,8 +84,8 @@ public class P_Input {
 			String msg = sc.next();
 			// Last character is %
 			for (int k = 0; k < msg.length(); k++)
-			if (msg.charAt(k) == '%')
-			msg = msg.substring(0, k);
+				if (msg.charAt(k) == '%')
+					msg = msg.substring(0, k);
 
 			toPrint = createNewGossip(gossip, SHA_256, date, msg, true, fd, directory);
 
@@ -112,7 +115,7 @@ public class P_Input {
 
 			toPrint = createNewPeer(peer, name, p, ip, true, fd, directory);
 
-		} else if (in.contains("LEAVE:")){
+		} else if (in.contains("LEAVE:")) {
 			sc.next();
 			// Name
 			final String name = sc.next();
@@ -178,7 +181,7 @@ public class P_Input {
 		return toPrint;
 	}
 
-	static String createNewPeer(final Peer[] peer, String name, int port, String ip_addr,
+	static String createNewPeer(final Peer[] peer, String name, final int port, String ip_addr,
 			final boolean writeToFile, final String fd, File directory) {
 		// Search for existing peer
 		String toPrint = "Peer exists, address updated\n";
@@ -197,62 +200,61 @@ public class P_Input {
 			peer[num_peers] = new Peer(name, ip_addr, port);
 			toPrint = "New peer added\n";
 			if (writeToFile) {
-		         try {
-		             // No preexisting file
-		             directory = new File(fd + "peer1.txt");
-		             if (!directory.exists()) {
-		                 directory.createNewFile();
-		             }
-	                 final FileWriter fw = new FileWriter(directory, true);
-	                 final BufferedWriter bw = new BufferedWriter(fw);
-	                 String p = Integer.toString(port);
+				try {
+					// No preexisting file
+					directory = new File(fd + "peer1.txt");
+					if (!directory.exists()) {
+						directory.createNewFile();
+					}
+					final FileWriter fw = new FileWriter(directory, true);
+					final BufferedWriter bw = new BufferedWriter(fw);
+					final String p = Integer.toString(port);
 
-                     bw.write(name);
-                     bw.newLine();
-                     bw.write(p);
-                     bw.newLine();
-                     bw.write(ip_addr);
-                     bw.newLine();
+					bw.write(name);
+					bw.newLine();
+					bw.write(p);
+					bw.newLine();
+					bw.write(ip_addr);
+					bw.newLine();
 
+					bw.close();
+				} catch (final IOException e) {
 
-	                 bw.close();
-	            } catch (final IOException e) {
-
-	            }
+				}
 			}
 			num_peers++;
 			available_peers--;
 		} else {
 
-		    try {
-		        // Completely rewrite the file
-		        // Is easier than changing the contents in the file
-                directory = new File(fd + "peer1.txt");
-                if (!directory.exists()) {
-                    directory.createNewFile();
-                }
-                final FileWriter fw = new FileWriter(directory);
-                final BufferedWriter bw = new BufferedWriter(fw);
-                String p = Integer.toString(port);
+			try {
+				// Completely rewrite the file
+				// Is easier than changing the contents in the file
+				directory = new File(fd + "peer1.txt");
+				if (!directory.exists()) {
+					directory.createNewFile();
+				}
+				final FileWriter fw = new FileWriter(directory);
+				final BufferedWriter bw = new BufferedWriter(fw);
+				String p = Integer.toString(port);
 
-                // Rewrite all contensts
-                for (int i = 0; i < num_peers; i++) {
-                    ip_addr = peer[i].ip_addr;
-                    p = ""+ peer[i].port;
-                    name = peer[i].name;
-                    bw.write(name);
-                    bw.newLine();
-                    bw.write(p);
-                    bw.newLine();
-                    bw.write(ip_addr);
-                    bw.newLine();
+				// Rewrite all contensts
+				for (int i = 0; i < num_peers; i++) {
+					ip_addr = peer[i].ip_addr;
+					p = "" + peer[i].port;
+					name = peer[i].name;
+					bw.write(name);
+					bw.newLine();
+					bw.write(p);
+					bw.newLine();
+					bw.write(ip_addr);
+					bw.newLine();
 
-                }
+				}
 
-                bw.close();
-           } catch (final IOException e) {
+				bw.close();
+			} catch (final IOException e) {
 
-           }
+			}
 		}
 		return toPrint;
 	}
@@ -296,26 +298,26 @@ public class P_Input {
 
 	}
 
-	public String leaveUser(String name, final String fd) throws IOException{
+	public String leaveUser(final String name, final String fd) throws IOException {
 		String result = null;
-		for(int i = 0; i < num_peers; i++ ){
-			if(peer[i] != null && peer[i].name.equals(name)){
-				File directory = new File(fd + "peer1.txt");
-				File tempFile = new File(fd + "tempPeer.txt");
-	             if (!directory.exists()) {
-	                 break;
-	             }
-	             if (!tempFile.exists()) {
-	            	 tempFile.createNewFile();
-	             }
-	             BufferedReader reader = new BufferedReader(new FileReader(directory));
-	             BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
-	             String currentLine;
+		for (int i = 0; i < num_peers; i++) {
+			if (peer[i] != null && peer[i].name.equals(name)) {
+				final File directory = new File(fd + "peer1.txt");
+				final File tempFile = new File(fd + "tempPeer.txt");
+				if (!directory.exists()) {
+					break;
+				}
+				if (!tempFile.exists()) {
+					tempFile.createNewFile();
+				}
+				final BufferedReader reader = new BufferedReader(new FileReader(directory));
+				final BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
+				String currentLine;
 
-	             while((currentLine = reader.readLine()) != null) {
+				while ((currentLine = reader.readLine()) != null) {
 					// trim newline when comparing with lineToRemove
-					String trimmedLine = currentLine.trim();
-					if(trimmedLine.equals(name)) {
+					final String trimmedLine = currentLine.trim();
+					if (trimmedLine.equals(name)) {
 						reader.readLine();
 						reader.readLine();
 						continue;
@@ -328,13 +330,13 @@ public class P_Input {
 					System.out.println("Can't delete file");
 				}
 				if (!tempFile.renameTo(directory)) {
-				    System.out.println("Can't rename file");
+					System.out.println("Can't rename file");
 				}
 			}
 		}
-		File directory = new File(fd);
+		final File directory = new File(fd);
 		readExisting(fd, directory);
-		result = "Left "+ name;
+		result = "Left " + name;
 		return result;
 	}
 
@@ -364,21 +366,21 @@ public class P_Input {
 	}
 
 	public ArrayList<Peer> getAllPeers() {
-	    ArrayList<Peer> allPeers = new ArrayList<Peer>();
-	    for (int i = 0; i < num_peers; i++) {
-	        allPeers.add(peer[i]);
+		final ArrayList<Peer> allPeers = new ArrayList<Peer>();
+		for (int i = 0; i < num_peers; i++) {
+			allPeers.add(peer[i]);
 
-	    }
+		}
 
-	    return allPeers;
+		return allPeers;
 	}
 
 	public ArrayList<Gossip> getAllGossips() {
-        ArrayList<Gossip> allGossips = new ArrayList<Gossip>();
-        for (int i = 0; i < num_gossips; i++) {
-            allGossips.add(gossip[i]);
-        }
+		final ArrayList<Gossip> allGossips = new ArrayList<Gossip>();
+		for (int i = 0; i < num_gossips; i++) {
+			allGossips.add(gossip[i]);
+		}
 
-        return allGossips;
-    }
+		return allGossips;
+	}
 }

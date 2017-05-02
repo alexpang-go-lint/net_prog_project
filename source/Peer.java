@@ -1,5 +1,3 @@
-import java.math.BigInteger;
-
 /*
  * Student:    Trung Nguyen, Yat Shing Pang
  * Email:      tnguyen2013@my.fit.edu, apang2013@my.fit.edu
@@ -10,13 +8,13 @@ import java.math.BigInteger;
 public class Peer extends ASNObjArrayable {
 	String name, ip_addr;
 	int port;
-	final static byte TAG_AP2 = (byte) Encoder.buildASN1byteType(Encoder.CLASS_APPLICATION, Encoder.PC_CONSTRUCTED, (byte)2);
+	final static byte TAG_AP2 = Encoder.buildASN1byteType(Encoder.CLASS_APPLICATION, Encoder.PC_CONSTRUCTED, (byte) 2);
 
 	// Empty constructor for peers answer
 	public Peer() {
-	    this.name = "";
-	    this.ip_addr = "";
-	    this.port = 0;
+		this.name = "";
+		this.ip_addr = "";
+		this.port = 0;
 	}
 
 	public Peer(final String name, final String ip_addr, final int port) {
@@ -26,27 +24,34 @@ public class Peer extends ASNObjArrayable {
 
 	}
 
-    @Override
-    public Encoder getEncoder() {
-        Encoder e = new Encoder().initSequence();
-        e.addToSequence(new Encoder(name).setASN1Type(Encoder.TAG_UTF8String));             // Encode string
-        e.addToSequence(new Encoder(port).setASN1Type(Encoder.TAG_INTEGER));                                                 // Encode integers
-        e.addToSequence(new Encoder(ip_addr).setASN1Type(Encoder.TAG_PrintableString));     // Encode printable string
+	@Override
+	public Encoder getEncoder() {
+		final Encoder e = new Encoder().initSequence();
+		e.addToSequence(new Encoder(name).setASN1Type(Encoder.TAG_UTF8String)); // Encode
+																				// string
+		e.addToSequence(new Encoder(port).setASN1Type(Encoder.TAG_INTEGER)); // Encode
+																				// integers
+		e.addToSequence(new Encoder(ip_addr).setASN1Type(Encoder.TAG_PrintableString)); // Encode
+																						// printable
+																						// string
 
-        return e.setASN1Type(TAG_AP2);
-    }
+		return e.setASN1Type(TAG_AP2);
+	}
 
-    @Override
-    public Peer decode(Decoder dec) throws ASN1DecoderFail {
-        Decoder d = dec.getContent();
+	@Override
+	public Peer decode(final Decoder dec) throws ASN1DecoderFail {
+		final Decoder d = dec.getContent();
 
-        name = d.getFirstObject(true).getString(Encoder.TAG_UTF8String);
-        port = d.getFirstObject(true).getInteger(Encoder.TAG_INTEGER).intValue();
-        ip_addr = d.getFirstObject(true).getString(Encoder.TAG_PrintableString);
+		name = d.getFirstObject(true).getString(Encoder.TAG_UTF8String);
+		port = d.getFirstObject(true).getInteger(Encoder.TAG_INTEGER).intValue();
+		ip_addr = d.getFirstObject(true).getString(Encoder.TAG_PrintableString);
 
-        return this; //new Peer(decoded_NAME, decoded_IP, decoded_PORT.intValue());
-    }
-    public Peer instance() throws CloneNotSupportedException {
-        return new Peer();
-    }
+		return this; // new Peer(decoded_NAME, decoded_IP,
+						// decoded_PORT.intValue());
+	}
+
+	@Override
+	public Peer instance() throws CloneNotSupportedException {
+		return new Peer();
+	}
 }
