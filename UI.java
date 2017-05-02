@@ -114,8 +114,8 @@ public class UI {
         System.out.println("Server started at port: " + port
                             +"\nData file path: " + path);
 		// create thread 1 listen for TCP 1 listen to UDP
-		final Thread tcp = new TCPThread(port, path);
-		final Thread udp = new UDPServer(port, path);
+		final Thread tcp = new TCPThread(port, path, delayTime);
+		final Thread udp = new UDPServer(port, path, delayTime);
 		final Thread client = new thread_client(protocol, ip, port);
 		// start the thread
 		tcp.start();

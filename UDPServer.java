@@ -15,18 +15,21 @@ public class UDPServer extends Thread {
 
 	private final DatagramSocket udpSocket;
 	private final String path;
+	private final int delay;
 
-	public UDPServer(final int port, final String path) throws SocketException {
+	public UDPServer(final int port, final String path, final int delay) throws SocketException {
 
 		udpSocket = new DatagramSocket(port);
 		this.path = path;
+		this.delay = delay;
 	}
 
+	@SuppressWarnings("static-access")
 	@Override
 	public void run() {
 		// System.out.println("start thread");
 		try {
-			this.sleep(5000);
+			this.sleep(delay);
 		} catch (InterruptedException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -114,12 +117,7 @@ public class UDPServer extends Thread {
     	                    final UDPBroadcast bc = new UDPBroadcast(port, output, ips, ports);
     	                    bc.broadCast();
     					}
-					}else if (toProcess.contains("LEAVE:")) {
-						//call leave
-						String[] str = toProcess.split(":");
-						String name = str[1];
 					}
-					
 				}
 				if (isGossip) {
 
@@ -130,6 +128,12 @@ public class UDPServer extends Thread {
 			        PeersAnswer pa = new PeersAnswer(p.getAllPeers());
 			        Encoder e = pa.getEncoder();
 				    outPack = new DatagramPacket(e.getBytes(), e.getBytes().length, addr, port);
+				}
+				try {
+					this.sleep(2000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 				udpSocket.send(outPack);
 				// System.out.println("Data sent to address: "+addr.toString()+"

@@ -20,7 +20,7 @@ public class GET_OPT_UI {
     private String t_msg = "";
     private static String protocol = "";
     private static String path = "";
-    private static int delay_time;
+    private static int delay_time = 0;
 
     public GET_OPT_UI () {}
 

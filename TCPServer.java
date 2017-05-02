@@ -17,12 +17,14 @@ public class TCPServer extends Thread {
 
 	private Socket sock = null;
 	private String path = "";
+	private int delay = 0;
 
 	// initiate the TCP server
-	public TCPServer(final Socket sock, final String path) {
+	public TCPServer(final Socket sock, final String path, final int delay) {
 		// System.out.println("socket initiated");
 		this.sock = sock;
 		this.path = path;
+		this.delay = delay;
 	}
 
 	@SuppressWarnings("static-access")
@@ -30,7 +32,7 @@ public class TCPServer extends Thread {
 	public void run() {
 		// System.out.println("start thread");
 		try {
-			this.sleep(5000);
+			this.sleep(delay);
 		} catch (InterruptedException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -127,6 +129,12 @@ public class TCPServer extends Thread {
 			        Encoder e = pa.getEncoder();
 				    output = new String(e.getBytes());
 				    isQuery = false;
+				}
+				try {
+					this.sleep(2000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 				out.write(output, 0, output.length());
                 for (int i = 0; i < (output.length() + 100)/100 ; i++) {

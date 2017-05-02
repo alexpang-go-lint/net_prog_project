@@ -49,8 +49,8 @@ public class NPServer {
         System.out.println("Server started at port: " + port
                             +"\nData file path: " + path);
         // create thread 1 listen for TCP 1 listen to UDP
-        final Thread tcp = new TCPThread(port, path);
-        final Thread udp = new UDPServer(port, path);
+        final Thread tcp = new TCPThread(port, path, 5000);
+        final Thread udp = new UDPServer(port, path, 5000);
         final Thread client = new thread_client(connectionType, addr, port);
         // start the thread
         tcp.start();

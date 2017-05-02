@@ -332,6 +332,8 @@ public class P_Input {
 				}
 			}
 		}
+		File directory = new File(fd);
+		readExisting(fd, directory);
 		result = "Left "+ name;
 		return result;
 	}

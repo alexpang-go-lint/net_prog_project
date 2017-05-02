@@ -12,10 +12,12 @@ public class TCPThread extends Thread {
 
 	private final ServerSocket socket;
 	private final String path;
+	private final int delay;
 
-	public TCPThread(final int port, final String path) throws IOException {
+	public TCPThread(final int port, final String path, final int delay) throws IOException {
 		socket = new ServerSocket(port);
 		this.path = path;
+		this.delay = delay;
 	}
 
 	@Override
@@ -23,7 +25,7 @@ public class TCPThread extends Thread {
 		while (true) {
 			try {
 				final Socket tcpSocket = socket.accept();
-				final Thread t = new TCPServer(tcpSocket, path);
+				final Thread t = new TCPServer(tcpSocket, path, delay);
 				t.start();
 			//	t.join();
 			} catch (final IOException e) {
