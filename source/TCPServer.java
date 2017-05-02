@@ -2,7 +2,7 @@
  * Student:    Trung Nguyen, Yat Shing Pang
  * Email:      tnguyen2013@my.fit.edu, apang2013@my.fit.edu
  * Course:     CSE 4232
- * Project:    GOSSIP P2P, Milestone 4
+ * Project:    GOSSIP P2P, Milestone 5
 */
 
 import java.io.BufferedReader;
@@ -85,13 +85,13 @@ public class TCPServer extends Thread {
 			            decoded_P = new Peer().decode(d);
 			            toProcess = "PEER:" + decoded_P.name + ":PORT=" + decoded_P.port + ":IP=" + decoded_P.ip_addr;
 			            isPeer = true;
-	
+
 			        } catch (ASN1DecoderFail e3) {
 			            // Not peer, do nothing
 			        }
 		        }else if(d.tagVal() == 4){
 			        Leave decoded_leave;
-			        
+
 			        try {
 			        	//System.out.println("decoding leave");
 			            decoded_leave = new Leave().decode(d);

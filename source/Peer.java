@@ -4,7 +4,7 @@ import java.math.BigInteger;
  * Student:    Trung Nguyen, Yat Shing Pang
  * Email:      tnguyen2013@my.fit.edu, apang2013@my.fit.edu
  * Course:     CSE 4232
- * Project:    GOSSIP P2P, Milestone 4
+ * Project:    GOSSIP P2P, Milestone 5
 */
 
 public class Peer extends ASNObjArrayable {

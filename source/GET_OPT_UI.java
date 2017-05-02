@@ -2,7 +2,7 @@
  * Student:    Trung Nguyen, Yat Shing Pang
  * Email:      tnguyen2013@my.fit.edu, apang2013@my.fit.edu
  * Course:     CSE 4232
- * Project:    GOSSIP P2P, Milestone 4
+ * Project:    GOSSIP P2P, Milestone 5
 */
 
 import org.apache.commons.cli.CommandLine;
@@ -90,14 +90,14 @@ public class GET_OPT_UI {
                                        .desc("UDP")
                                        .valueSeparator()
                                        .build();
-        
+
         Option delay = Option.builder("D")
 										.longOpt("Delay")
 						                .desc("Delay")
 						                .hasArg()
 						                .valueSeparator()
 						                .build();
-        
+
         Option help = Option.builder("h")
                                     .longOpt("help")
                                     .build();

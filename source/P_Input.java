@@ -14,7 +14,7 @@ import java.util.Scanner;
  * Student:    Trung Nguyen, Yat Shing Pang
  * Email:      tnguyen2013@my.fit.edu, apang2013@my.fit.edu
  * Course:     CSE 4232
- * Project:    GOSSIP P2P, Milestone 4
+ * Project:    GOSSIP P2P, Milestone 5
 */
 public class P_Input {
 	final static int max = 1000;
@@ -116,7 +116,7 @@ public class P_Input {
 			sc.next();
 			// Name
 			final String name = sc.next();
-			
+
 			toPrint = leaveUser(name, fd);
 		} else {
 			toPrint = ("Error: Unrecognizeable command");
@@ -295,7 +295,7 @@ public class P_Input {
 		}
 
 	}
-	
+
 	public String leaveUser(String name, final String fd) throws IOException{
 		String result = null;
 		for(int i = 0; i < num_peers; i++ ){
@@ -311,7 +311,7 @@ public class P_Input {
 	             BufferedReader reader = new BufferedReader(new FileReader(directory));
 	             BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
 	             String currentLine;
-	             
+
 	             while((currentLine = reader.readLine()) != null) {
 					// trim newline when comparing with lineToRemove
 					String trimmedLine = currentLine.trim();
@@ -322,7 +322,7 @@ public class P_Input {
 					}
 					writer.write(currentLine + System.getProperty("line.separator"));
 				}
-				writer.close(); 
+				writer.close();
 				reader.close();
 				if (!directory.delete()) {
 					System.out.println("Can't delete file");
