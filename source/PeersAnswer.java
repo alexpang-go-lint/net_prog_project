@@ -20,10 +20,11 @@ public class PeersAnswer extends ASNObj {
 
 	}
 
+	@SuppressWarnings("static-access")
 	@Override
 	public Encoder getEncoder() {
 		final Encoder e = new Encoder().initSequence();
-		Encoder.getEncoder(peers);
+		e.getEncoder(peers);
 		return new Encoder().initSequence().addToSequence(e).setASN1Type(TAG_AC1);
 	}
 

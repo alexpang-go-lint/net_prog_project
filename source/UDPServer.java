@@ -36,7 +36,7 @@ public class UDPServer extends Thread {
 
 		while (true) {
 			final DatagramPacket msg = new DatagramPacket(data, data.length);
-			boolean isGossip = false, isPeer = false;
+			boolean isGossip = false, isPeer = false, isDiscarded = false;
 			final boolean isQuery = false;
 			try {
 				udpSocket.receive(msg);
@@ -106,7 +106,7 @@ public class UDPServer extends Thread {
 					outPack = new DatagramPacket(outMsg, outMsg.length, addr, port);
 					// System.out.println("sending data");
 					// System.out.println(data);
-					if (toProcess.contains("GOSSIP:")) {
+					if (toProcess.contains("GOSSIP:") && !toProcess.contains("Discard.")) {
 						// Broadcast
 						final int[] ports = p.getPorts();
 						final String[] ips = p.getIPs();
@@ -115,6 +115,9 @@ public class UDPServer extends Thread {
 							final UDPBroadcast bc = new UDPBroadcast(port, output, ips, ports);
 							bc.broadCast();
 						}
+					}else if (toProcess.contains("GOSSIP:") && toProcess.contains("Discard.")) {
+						
+						isDiscarded = true;
 					}
 				}
 				if (isGossip) {
@@ -125,6 +128,12 @@ public class UDPServer extends Thread {
 
 					final PeersAnswer pa = new PeersAnswer(p.getAllPeers());
 					final Encoder e = pa.getEncoder();
+					outPack = new DatagramPacket(e.getBytes(), e.getBytes().length, addr, port);
+				} else if (isDiscarded){
+					String[] temp = toProcess.split(":");
+					
+					Gossip discard = new Gossip(temp[3], temp[1], temp[2]);
+					final Encoder e = discard.getEncoder();
 					outPack = new DatagramPacket(e.getBytes(), e.getBytes().length, addr, port);
 				}
 				try {

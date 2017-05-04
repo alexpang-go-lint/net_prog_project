@@ -135,13 +135,13 @@ public class P_Input {
 		boolean g_exists = false;
 		String toPrint = null;
 		for (int i = 0; i < num_gossips; i++) {
-			if (gossip[i] != null)
+			if (gossip[i] != null){
 				if (gossip[i].msg.equals(msg)) {
-					toPrint = "DISCARDED.";
+					toPrint = thread_client.getGOSSIP("Discarded.", "");
 					g_exists = true;
 					discarded = true;
 				}
-
+			}
 		}
 
 		// Create gossip object

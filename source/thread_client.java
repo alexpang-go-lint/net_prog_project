@@ -199,22 +199,34 @@ public class thread_client extends Thread {
 					final byte[] b = recv.getData();
 
 					final Decoder d = new Decoder(b);
-					final ArrayList<Peer> list = new ArrayList<Peer>();
-					PeersAnswer decoded_pa = new PeersAnswer(list);
-					try {
-						decoded_pa = new PeersAnswer().decode(d);
-
-						String toPrint = "PEERS|" + decoded_pa.peers.size() + "|";
-						for (int i = 0; i < decoded_pa.peers.size(); i++) {
-							toPrint += decoded_pa.peers.get(i).name + ":" + "PORT=" + decoded_pa.peers.get(i).port + ":"
-									+ "IP=" + decoded_pa.peers.get(i).ip_addr + "|";
+					if(d.tagVal() == 1){
+						try {
+							Gossip decoded_gossip = new Gossip().decode(d);
+							
+							String toPrint = "GOSSIP:" + decoded_gossip.SHA_256 + ":" + decoded_gossip.str_date + ":" + decoded_gossip.msg + "%";
+							System.out.println(toPrint);
+						} catch (ASN1DecoderFail e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
 						}
-
-						toPrint += "%";
-						System.out.println(toPrint);
-
-					} catch (final ASN1DecoderFail e1) {
-
+					}else {
+						final ArrayList<Peer> list = new ArrayList<Peer>();
+						PeersAnswer decoded_pa = new PeersAnswer(list);
+						try {
+							decoded_pa = new PeersAnswer().decode(d);
+	
+							String toPrint = "PEERS|" + decoded_pa.peers.size() + "|";
+							for (int i = 0; i < decoded_pa.peers.size(); i++) {
+								toPrint += decoded_pa.peers.get(i).name + ":" + "PORT=" + decoded_pa.peers.get(i).port + ":"
+										+ "IP=" + decoded_pa.peers.get(i).ip_addr + "|";
+							}
+	
+							toPrint += "%";
+							System.out.println(toPrint);
+	
+						} catch (final ASN1DecoderFail e1) {
+	
+						}
 					}
 
 				} else {
