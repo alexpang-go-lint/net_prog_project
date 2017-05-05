@@ -5,8 +5,9 @@
  # Course:     CSE 4232
  # Project:    GOSSIP P2P, Milestone 5
 #
-path=$(pwd)
-library="$path/library/commons-cli-1.3.1.jar"
-cd source
 
-javac -d "$path/bin" -cp .:$library *.java
+path=$(pwd)
+file=($path/data/test.txt)
+library="$path/library/commons-cli-1.3.1.jar"
+cd bin
+java -cp .:"$library" UI -s 127.0.0.1 -p 3333 < $file
